@@ -13,24 +13,21 @@ export function pathSetup(path, callback) {
   return [
     newRegex,
     function controller(req, res) {
-      req = pathController(req);
+      pathController(req, params);
       callback(req, res);
     },
   ];
 }
 
-function pathController(req) {
-  let { params, pathArray } = pathSetup("/user/:id/:name");
-  console.log(pathArray);
+function pathController(req, params) {
   let queryArray = req.url.split("/");
+
   let index = 2;
   for (let key in params) {
     params[key] = Number(queryArray[index]) || queryArray[index];
     index++;
   }
   req.params = params;
-  console.log(req, "pathController");
-  return req;
 }
 
 function regexBuilder(pathArray) {
@@ -45,7 +42,5 @@ function regexBuilder(pathArray) {
   if (regex) {
     return new RegExp(regex);
   }
-  return new RegExp("/([0-9]+|[a-z]+|[A-Z]+)");
+  return new RegExp("^/(?:[a-zA-Z]+|d+)?$");
 }
-
-pathSetup("/", "/user");
